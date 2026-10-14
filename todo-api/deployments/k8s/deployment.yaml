@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: todo-api
+  namespace: todo-app-namespace
+
+spec:
+
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: todo-api
+
+  template:
+
+    metadata:
+      labels:
+        app: todo-api
+
+    spec:
+
+      containers:
+      - name: todo-api
+
+        image: todo-api:1.5
+
+        ports:
+        - name: http
+          containerPort: 8080
+
+        envFrom:
+        - configMapRef:
+            name: todo-api-config
+
+        env:
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: todo-app-secrets
+              key: POSTGRES_DB
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: todo-app-secrets
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: todo-app-secrets
+              key: POSTGRES_PASSWORD
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http

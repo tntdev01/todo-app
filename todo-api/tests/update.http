@@ -1,0 +1,16 @@
+PUT http://localhost:8080/todos/2775e838-301b-431f-aabf-7beb4d737860
+Content-Type: application/json
+
+{
+    "title": "Updated Sample Todo",
+    "comment": "This is an updated sample todo item."
+}
+
+###
+
+PUT http://localhost:8080/todos/d495c4fd-05ee-40a1-bdad-86a10b351a86
+Content-Type: application/json
+
+{
+    "title": "TODO# 3"
+}

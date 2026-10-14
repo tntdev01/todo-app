@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: todo-app-db
+  namespace: todo-app-namespace
+
+spec:
+  serviceName: todo-app-db-service
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: todo-app-db
+
+  template:
+    metadata:
+      labels:
+        app: todo-app-db
+    spec:
+      containers:
+        - name: todo-app-db
+          image: postgres@sha256:06cad38a5d9f5d24b4d83d86def30795d5e4b757fedbf5281172b576dedcd941
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: postgres
+              containerPort: 5432
+
+          envFrom:
+            - secretRef:
+                name: todo-app-secrets
+
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

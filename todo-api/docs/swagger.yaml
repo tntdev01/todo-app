@@ -1,0 +1,184 @@
+basePath: /
+definitions:
+  dto.ErrorResponse:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+    type: object
+  dto.SuccessResponse:
+    properties:
+      data: {}
+      success:
+        type: boolean
+    type: object
+  handler.CreateTodoRequest:
+    properties:
+      comment:
+        maxLength: 255
+        minLength: 3
+        type: string
+      title:
+        maxLength: 40
+        minLength: 3
+        type: string
+    required:
+    - comment
+    - title
+    type: object
+  handler.UpdateTodoRequest:
+    properties:
+      comment:
+        maxLength: 255
+        minLength: 3
+        type: string
+      completed:
+        type: boolean
+      title:
+        maxLength: 40
+        minLength: 3
+        type: string
+    required:
+    - comment
+    - title
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a simple Todo API built with Go and Gin.
+  title: Todo API
+  version: "1.0"
+paths:
+  /todos:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all todo items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get all todo items
+      tags:
+      - todos
+    post:
+      consumes:
+      - application/json
+      description: Create a new todo item with the given title and comment
+      parameters:
+      - description: Todo to create
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create a new todo item
+      tags:
+      - todos
+  /todos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing todo item by its ID
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Delete a todo item
+      tags:
+      - todos
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a single todo item by its ID
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get a todo item by ID
+      tags:
+      - todos
+    put:
+      consumes:
+      - application/json
+      description: Update an existing todo item by its ID
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Todo to update
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateTodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Update a todo item
+      tags:
+      - todos
+swagger: "2.0"
