@@ -1,9 +1,11 @@
 package main
 
 import (
-	os/exec
+	"net/http"
 )
 
-func runCommand(cmd string) {
-	exec.Command("sh", "-c", cmd).Run()
+func handler(w http.ResponseWriter, r *http.Request) {
+	url := r.URL.Query().Get("url")
+
+	http.Get(url)
 }
