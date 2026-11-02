@@ -13,7 +13,9 @@ var testPool *pgxpool.Pool
 
 func TestMain(m *testing.M) {
 
-	_ = godotenv.Load("../../.env.test")
+	if os.Getenv("TEST_DATABASE_URL") == "" {
+		_ = godotenv.Load("../../.env.test")
+	}
 
 	connString := os.Getenv("TEST_DATABASE_URL")
 
@@ -22,7 +24,11 @@ func TestMain(m *testing.M) {
 		context.Background(),
 		connString,
 	)
+	if err != nil {
+		panic(err)
+	}
 
+	err = testPool.Ping(context.Background())
 	if err != nil {
 		panic(err)
 	}
